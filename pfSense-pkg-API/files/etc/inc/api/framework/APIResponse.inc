@@ -2327,6 +2327,18 @@ function get($id, $data=[], $all=false) {
             "return" => $id,
             "message" => "A list of backend servers must be specified. None provided."
         ],
+        2287 => [
+            "status" => "bad request",
+            "code" => 400,
+            "return" => $id,
+            "message" => "Account key name already in use. The account key must have a unique name."
+        ],
+        2288 => [
+            "status" => "bad request",
+            "code" => 400,
+            "return" => $id,
+            "message" => "Account key must have a description, none provided."
+        ],
 
         // 3000-3999 reserved for /api/v1/interfaces API calls
         3000 => [
