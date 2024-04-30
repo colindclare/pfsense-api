@@ -26,6 +26,8 @@ class APIServicesAcmeAccountkeyCreate extends APIModel {
 
     # Create our method constructor
     public function __construct() {
+        global $a_acmeserver;
+
         parent::__construct();
         $this->packages = ["pfSense-pkg-acme"];
         $this->privileges = ["page-all", "page-service-acme"];
@@ -73,9 +75,9 @@ class APIServicesAcmeAccountkeyCreate extends APIModel {
 
     private function __populate_defaults() {
 
-        foreach ($this->frontend_defaults as $setting => $value) {
+        foreach ($this->key_defaults as $setting => $value) {
             if (!array_key_exists($setting, $this->validated_data)) {
-                $this->validated_data[$setting] = $this->frontend_defaults[$setting];
+                $this->validated_data[$setting] = $this->key_defaults[$setting];
             }   
         }   
 
@@ -93,11 +95,25 @@ class APIServicesAcmeAccountkeyCreate extends APIModel {
 
     }
 
-    public function action() {       
+    public function action() {
 
-        $account_key = generateAccountKey($name, $this->allowed_cas[$this->validated_data['acmeserver']]);
+	$register_data = [
+	    'name' => "{$this->validated_data['name']}-register",
+	    'ca' => $this->validated_data['acmeserver'],
+	    'url' => $this->allowed_cas[$this->validated_data['acmeserver']]['url'],
+	    'email' => $this->validated_data['email']
+	];
+
+	$account_key = pfsense_pkg\acme\generateAccountKey($this->validated_data['name'], $register_data['url']);
         $this->validated_data['accountkey'] = base64_encode($account_key);
 
+	if (pfsense_pkg\acme\registerAcmeAccountKey($register_data['name'], $register_data['url'], $account_key, $register_data['email'])) {
+	    $this->id = $this->get_next_id("installedpackages/acme/accountkeys/item");
+	    $this->set_config("installedpackages/acme/accountkeys/item/{$this->id}", $this->validated_data);
+	    $this->write_config();
+	} else {
+	    return APIResponse\get(1, ['msg' => 'Registration failed', 'request_data' => $this->validated_data]);
+        }
         return APIResponse\get(0, ['msg' => 'Account key successfully created', 'request_data' => $this->validated_data]);
 
     }
