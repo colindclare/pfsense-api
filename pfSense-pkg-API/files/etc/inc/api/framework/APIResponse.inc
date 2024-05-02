@@ -2331,13 +2331,37 @@ function get($id, $data=[], $all=false) {
             "status" => "bad request",
             "code" => 400,
             "return" => $id,
-            "message" => "Account key name already in use. The account key must have a unique name."
+            "message" => "ACME account key/certificate name already in use. Account keys/certificates must have a unique name."
         ],
         2288 => [
             "status" => "bad request",
             "code" => 400,
             "return" => $id,
-            "message" => "Account key must have a description, none provided."
+            "message" => "ACME account key/certificate must have a description, none provided."
+        ],
+        2289 => [
+            "status" => "bad request",
+            "code" => 400,
+            "return" => $id,
+            "message" => "One or more submitted SAN domains is invalid."
+        ],
+        2290 => [
+            "status" => "bad request",
+            "code" => 400,
+            "return" => $id,
+            "message" => "Could not find provided ACME account key."
+        ],
+        2291 => [
+            "status" => "bad request",
+            "code" => 400,
+            "return" => $id,
+            "message" => "ACME account key/certificate names cannot contain spaces."
+        ],
+        2292 => [
+            "status" => "bad request",
+            "code" => 400,
+            "return" => $id,
+            "message" => "Failed to issue ACME certificate."
         ],
 
         // 3000-3999 reserved for /api/v1/interfaces API calls

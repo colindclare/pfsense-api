@@ -52,7 +52,7 @@ class APIServicesAcmeAccountkeyCreate extends APIModel {
 
     private function __validate_descr() {
         if (!isset($this->initial_data['descr']) || empty($this->initial_data['descr'])) {
-            $this->errors[] = APIResponse\get(2284, ['request_data' => $this->initial_data]);
+            $this->errors[] = APIResponse\get(2288, ['request_data' => $this->initial_data]);
         } else {
             $this->validated_data['descr'] = $this->initial_data['descr'];
         }
@@ -69,7 +69,14 @@ class APIServicesAcmeAccountkeyCreate extends APIModel {
             }  
         }
 
-        return $name_is_unique;
+        /* Ensure key name has no spaces, registration breaks otherwise */
+        if (str_contains(trim($this->initial_data['name']), ' ')) {
+            $this->errors[] = APIResponse\get(2291, ['name' => $this->initial_data['name']]);
+            $no_spaces = false;
+        } else {
+            $no_spaces = true;
+        }
+        return ($name_is_unique && $no_spaces);
 
     }
 
@@ -97,22 +104,22 @@ class APIServicesAcmeAccountkeyCreate extends APIModel {
 
     public function action() {
 
-	$register_data = [
-	    'name' => "{$this->validated_data['name']}-register",
-	    'ca' => $this->validated_data['acmeserver'],
-	    'url' => $this->allowed_cas[$this->validated_data['acmeserver']]['url'],
-	    'email' => $this->validated_data['email']
-	];
+        $register_data = [
+            'name' => "{$this->validated_data['name']}-register",
+            'ca' => $this->validated_data['acmeserver'],
+            'url' => $this->allowed_cas[$this->validated_data['acmeserver']]['url'],
+            'email' => $this->validated_data['email']
+        ];
 
-	$account_key = pfsense_pkg\acme\generateAccountKey($this->validated_data['name'], $register_data['url']);
+        $account_key = pfsense_pkg\acme\generateAccountKey($this->validated_data['name'], $register_data['url']);
         $this->validated_data['accountkey'] = base64_encode($account_key);
 
-	if (pfsense_pkg\acme\registerAcmeAccountKey($register_data['name'], $register_data['url'], $account_key, $register_data['email'])) {
-	    $this->id = $this->get_next_id("installedpackages/acme/accountkeys/item");
-	    $this->set_config("installedpackages/acme/accountkeys/item/{$this->id}", $this->validated_data);
-	    $this->write_config();
-	} else {
-	    return APIResponse\get(1, ['msg' => 'Registration failed', 'request_data' => $this->validated_data]);
+        if (pfsense_pkg\acme\registerAcmeAccountKey($register_data['name'], $register_data['url'], $account_key, $register_data['email'])) {
+            $this->id = $this->get_next_id("installedpackages/acme/accountkeys/item");
+            $this->set_config("installedpackages/acme/accountkeys/item/{$this->id}", $this->validated_data);
+            $this->write_config();
+        } else {
+            return APIResponse\get(1, ['msg' => 'Registration failed', 'request_data' => $this->validated_data]);
         }
         return APIResponse\get(0, ['msg' => 'Account key successfully created', 'request_data' => $this->validated_data]);
 
