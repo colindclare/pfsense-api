@@ -2363,6 +2363,12 @@ function get($id, $data=[], $all=false) {
             "return" => $id,
             "message" => "Failed to issue ACME certificate."
         ],
+        2293 => [
+            "status" => "bad request",
+            "code" => 400,
+            "return" => $id,
+            "message" => "Provided ACME account key/certificate cannot be found."
+        ],
 
         // 3000-3999 reserved for /api/v1/interfaces API calls
         3000 => [
