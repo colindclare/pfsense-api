@@ -34,14 +34,14 @@ class APIServicesAcmeCertificateDelete extends APIModel {
 
     private function __validate_account_key() {
         $this->id = pfsense_pkg\acme\get_certificate_id($this->initial_data['name']);
-	if (!$this->id) {
-	    $this->errors[] = APIResponse\get(2293, ['name' => $this->initial_data['name']);
+	if (is_null($this->id)) {
+	    $this->errors[] = APIResponse\get(2293, ['name' => $this->initial_data['name']]);
 	}
     }
 
     public function action() {
         $this->del_config("installedpackages/acme/certificates/item/{$this->id}");
         $this->write_config();
-	return APIResponse(0, ['msg' => "Account key {$this->initial_data['name']} successfully delete."]);
+	return APIResponse\get(0, ['msg' => "Certificate {$this->initial_data['name']} successfully deleted."]);
     }
 }

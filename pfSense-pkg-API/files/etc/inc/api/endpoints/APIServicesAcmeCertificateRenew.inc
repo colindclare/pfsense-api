@@ -15,13 +15,13 @@
 
 require_once("api/framework/APIEndpoint.inc");
 
-class APIServicesAcmeCertificateIssue extends APIEndpoint {
+class APIServicesAcmeCertificateRenew extends APIEndpoint {
     public function __construct() {
         parent::__construct();
-        $this->url = "/api/v1/services/acme/certificate/issue";
+        $this->url = "/api/v1/services/acme/certificate/renew";
     }
 
     protected function post() {
-        return (new APIServicesAcmeCertificateIssueCreate())->call();
+        return (new APIServicesAcmeCertificateRenewCreate())->call();
     }
 }

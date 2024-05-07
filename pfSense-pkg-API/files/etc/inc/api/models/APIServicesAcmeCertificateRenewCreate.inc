@@ -35,7 +35,7 @@ class APIServicesAcmeCertificateRenewCreate extends APIModel {
 
     private function __validate_certificates() {
         foreach ($this->initial_data['certificates'] as $certificate) {
-            if (!pfsense_pkg\acme\get_certificate_id($certificate) {
+            if (!pfsense_pkg\acme\get_certificate_id($certificate)) {
                 $this->errors(2293, ['certificate' => $certificate]);
 	    } else {
 		$this->validated_data[] = $certificate;
