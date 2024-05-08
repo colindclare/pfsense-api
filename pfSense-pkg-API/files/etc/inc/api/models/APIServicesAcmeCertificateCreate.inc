@@ -43,7 +43,7 @@ class APIServicesAcmeCertificateCreate extends APIModel {
                     [
                         'status' => 'enable',
                         'method' => 'shellcommand',
-                        'shellcommand' => '/usr/local/etc/rc.d/haproxy.sh restart'
+                        'command' => '/usr/local/etc/rc.d/haproxy.sh restart'
                     ]
                 ]
             ]
@@ -162,7 +162,7 @@ class APIServicesAcmeCertificateCreate extends APIModel {
 	    $result = pfsense_pkg\acme\issue_certificate($this->validated_data['name'], true);
 	    ob_end_clean();
 	    // End and clear output buffer
-	    if (result) {
+	    if ($result) {
                 return APIResponse\get(0, ['msg' => 'ACME Certificate successfully created', 'request_data' => $this->validated_data]);
 	    } else {
 		return APIResponse\get(2292, ['request_data' => $this->initial_data]);
