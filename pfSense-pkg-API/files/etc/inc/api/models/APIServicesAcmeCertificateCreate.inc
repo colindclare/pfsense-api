@@ -160,12 +160,12 @@ class APIServicesAcmeCertificateCreate extends APIModel {
 	    // Start an output buffer to keep things clean, since the acme package doesn't capture stdout/stderr
 	    ob_start();
 	    $result = pfsense_pkg\acme\issue_certificate($this->validated_data['name'], true);
-	    ob_end_clean();
+	    $output = ob_get_clean();
 	    // End and clear output buffer
 	    if ($result) {
                 return APIResponse\get(0, ['msg' => 'ACME Certificate successfully created', 'request_data' => $this->validated_data]);
 	    } else {
-		return APIResponse\get(2292, ['request_data' => $this->initial_data]);
+		return APIResponse\get(2292, ['request_data' => $this->initial_data, 'acme_output' => $output]);
 	    }
 	} else {
             return APIResponse\get(0, ['msg' => 'ACME Certificate successfully created, but not issued.', 'request_data' => $this->validated_data]);

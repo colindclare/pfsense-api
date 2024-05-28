@@ -2361,7 +2361,7 @@ function get($id, $data=[], $all=false) {
             "status" => "bad request",
             "code" => 400,
             "return" => $id,
-            "message" => "Failed to issue ACME certificate."
+            "message" => "Failed to issue ACME certificate. Providing output from acme.sh run."
         ],
         2293 => [
             "status" => "bad request",
