@@ -37,22 +37,22 @@ class APIServicesAcmeCertificateRenewCreate extends APIModel {
         foreach ($this->initial_data['certificates'] as $certificate) {
             if (!pfsense_pkg\acme\get_certificate_id($certificate)) {
                 $this->errors(2293, ['certificate' => $certificate]);
-	    } else {
-		$this->validated_data[] = $certificate;
+            } else {
+                $this->validated_data[] = $certificate;
             }
-	}
+        }
     }
 
     public function action() {
-	foreach ($this->validated_data as $certificate) {
-	    ob_start();
+        foreach ($this->validated_data as $certificate) {
+            ob_start();
             $result = pfsense_pkg\acme\issue_certificate($certificate, true, true);
-	    $output = ob_get_clean();
-	    if (!$result) {
-		$this->errors[] = APIResponse\get(2292, ['certificate' => $certificate], 'acme_output' => $output);
-	    }
+            $output = ob_get_clean();
+            if (!$result) {
+                $this->errors[] = APIResponse\get(2292, ['certificate' => $certificate, 'acme_output' => $output]);
+            }
         }
 
-	return APIResponse\get(0, ['msg' => 'Certificate(s) successfully renewed', 'certificates' => $this->validated_data]);
+        return APIResponse\get(0, ['msg' => 'Certificate(s) successfully renewed', 'certificates' => $this->validated_data]);
     }
 }

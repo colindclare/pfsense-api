@@ -25,7 +25,7 @@ class APIServicesAcmeAccountkeyDelete extends APIModel {
         parent::__construct();
         $this->packages = ["pfSense-pkg-acme"];
         $this->privileges = ["page-all", "page-service-acme"];
-	$this->change_note = "Deleted ACME account key via API.";
+        $this->change_note = "Deleted ACME account key via API.";
     }
 
     public function validate_payload() {
@@ -34,14 +34,14 @@ class APIServicesAcmeAccountkeyDelete extends APIModel {
 
     private function __validate_account_key() {
         $this->id = pfsense_pkg\acme\get_accountkey_id($this->initial_data['name']);
-	if (is_null($this->id)) {
-	    $this->errors[] = APIResponse\get(2293, ['name' => $this->initial_data['name']]);
-	}
+        if (is_null($this->id)) {
+            $this->errors[] = APIResponse\get(2293, ['name' => $this->initial_data['name']]);
+        }
     }
 
     public function action() {
         $this->del_config("installedpackages/acme/accountkeys/item/{$this->id}");
         $this->write_config();
-	return APIResponse\get(0, ['msg' => "Account key {$this->initial_data['name']} successfully deleted."]);
+        return APIResponse\get(0, ['msg' => "Account key {$this->initial_data['name']} successfully deleted."]);
     }
 }
