@@ -146,7 +146,7 @@ class APIServicesAcmeCertificateCreate extends APIModel {
         if (isset($this->initial_data['use_ecdsa']) && $this->initial_data['use_ecdsa']) {
             $this->validated_data['keylength'] = 'ec-384';
         } else {
-            $this->validated_data['keylength'] = '4096';
+            $this->validated_data['keylength'] = '2048';
         }
 
     }
