@@ -5833,6 +5833,172 @@ paths:
       summary: Read all service statuses
       tags:
         - Services
+  /api/v1/services/acme/accountkey:
+    get:
+      operationId: APIServicesAcmeAccountkeyRead
+      description: 'List configured ACME account keys and their registered ACME API.<br>
+
+        _Requires at least one of the following privileges:_ [`page-all`, `page-service-acme`]'
+      responses:
+        "200":
+          $ref: '#/components/responses/Success'
+        "401":
+          $ref: '#/components/responses/AuthenticationFailed'
+      summary: Read ACME account keys
+      tags:
+        - Services > Acme Certificates > Account keys
+    post:
+      operationId: APIServicesAcmeAccountkeyCreate
+      description: 'Create an ACME account key and register it with the chosen ACME API.<br>
+
+        _Requires at least one of the following privileges:_ [`page-all`, `page-service-acme`]'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  description: The name of the account key to create. The name cannot contain spaces.
+                  type: string
+                descr:
+                  description: A brief description of the account key being created.
+                  type: string
+                use_prod:
+                  default: false
+                  description: Whether or not to use the production Let's Encrypt API.
+                    The production API is rate limited, so it is recommended to leave this
+                    as the default `false` while testing is completed. Once the test certificate
+                    is issued successfully, set this to `true` to issue a production certificate.
+                  type: boolean
+      responses:
+        "200":
+          $ref: '#/components/responses/Success'
+        "401":
+          $ref: '#/components/responses/AuthenticationFailed'
+      summary: Create and register ACME account keys
+      tags:
+        - Services > Acme Certificates > Account keys
+    delete:
+      operationId: APIServicesAcmeAccountkeyDelete
+      description: 'Delete an ACME account key.<br>
+
+        _Requires at least one of the following privileges:_ [`page-all`, `page-service-acme`]'
+      parameters:
+        - description: The name of the account key to delete.
+          in: query
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: '#/components/responses/Success'
+        "401":
+          $ref: '#/components/responses/AuthenticationFailed'
+      summary: Delete ACME account keys
+      tags:
+        - Services > Acme Certificates > Account keys
+  /api/v1/services/acme/certificate:
+    get:
+      operationId: APIServicesAcmeCertificateRead
+      description: 'List configured ACME certificates and the ACME account keys used to issue them.<br>
+
+        _Requires at least one of the following privileges:_ [`page-all`, `page-service-acme`]'
+      responses:
+        "200":
+          $ref: '#/components/responses/Success'
+        "401":
+          $ref: '#/components/responses/AuthenticationFailed'
+      summary: Read ACME certificatess
+      tags:
+        - Services > Acme Certificates > Certificates
+    post:
+      operationId: APIServicesAcmeCertificateCreate
+      description: 'Create an ACME certificate using the ACME API registered to the provided ACME account key.<br>
+
+        _Requires at least one of the following privileges:_ [`page-all`, `page-service-acme`]'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  description: The name of the certificate to issue. The name cannot contain spaces.
+                  type: string
+                descr:
+                  description: A brief description of the certificate being issued.
+                  type: string
+                acmeaccount:
+                  description: The configured ACME account key to use when issuing the certificate.
+                  type: string
+                issuecert:
+                  description: Issue the cert via Let's Encrypt, in addition to configuring within pfSense.
+                    Defaults to `false`, so be sure to set this parameter if you want the certificate issued.
+                  type: boolean
+                  default: false
+                use_ecdsa:
+                  description: Use 384-bit ECDSA when issuing the certificate rather than 2048-bit RSA.
+                  type: boolean
+                  default: false
+                san_domains:
+                  description: A list of domains that will be added to the Let's Encrypt certificate.
+                    DNS for all domains in the list must ultimately resolve to the pfSense device in
+                    order to issue the certificate.
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          $ref: '#/components/responses/Success'
+        "401":
+          $ref: '#/components/responses/AuthenticationFailed'
+      summary: Create and issue ACME certificatess
+      tags:
+        - Services > Acme Certificates > Certificates
+    delete:
+      operationId: APIServicesAcmeCertificateDelete
+      description: 'Delete an ACME certificate.<br>
+
+        _Requires at least one of the following privileges:_ [`page-all`, `page-service-acme`]'
+      parameters:
+        - description: The name of the certificate to delete.
+          in: query
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: '#/components/responses/Success'
+        "401":
+          $ref: '#/components/responses/AuthenticationFailed'
+      summary: Delete ACME certificatess
+      tags:
+        - Services > Acme Certificates > Certificates
+  /api/v1/services/acme/certificate/renew:
+    post:
+      operationId: APIServicesAcmeCertificateRenewCreate
+      description: 'Renew one or more configured ACME certificates.<br>
+
+        _Requires at least one of the following privileges:_ [`page-all`, `page-service-acme`]'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                certificates:
+                  description: A list of certificates for which to issue a renew request.
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          $ref: '#/components/responses/Success'
+        "401":
+          $ref: '#/components/responses/AuthenticationFailed'
+      summary: Renew existing ACME certificatess
+      tags:
+        - Services > Acme Certificates > Certificates
   /api/v1/services/ddns:
     get:
       operationId: APIServicesDDNSRead
